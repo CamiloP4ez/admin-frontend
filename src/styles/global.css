@@ -1,0 +1,208 @@
+:root {
+  --color-primary: #4e4187;
+  --color-primary-dark: #3a2f6c;
+  --color-secondary: #ffe6a8;
+  --color-danger: #ff0026;
+  --color-danger-dark: #d60020;
+  --color-success: #90ee90;
+  --color-success-dark: #78c878;
+
+  --color-page-bg: #d1e5f0;
+  --color-bg-content: #fff8ff;
+  --color-bg-input: #ffffff;
+  --color-bg-hover: #f0f0f0;
+
+  --color-text-primary: #000000;
+  --color-text-secondary: #555555;
+  --color-text-light: #ffffff;
+  --color-text-input: #333333;
+  --color-text-placeholder: #888888;
+
+  --color-border: #b0b0b0;
+  --color-border-medium: #888888;
+  --color-border-dark: #555555;
+
+  --color-gray-light: #e9e9e9;
+  --color-gray-medium: #cccccc;
+  --color-gray-dark: #888888;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: var(--color-page-bg);
+  color: var(--color-text-primary);
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+    monospace;
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  font-size: 0.9rem;
+  background-color: var(--color-bg-content);
+}
+
+.admin-table th,
+.admin-table td {
+  border: 1px solid var(--color-border);
+  padding: 10px 12px;
+  text-align: left;
+  vertical-align: middle;
+}
+
+.admin-table th {
+  background-color: var(--color-gray-light);
+  font-weight: bold;
+  color: var(--color-text-primary);
+}
+
+.admin-table tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+.admin-table tr:hover {
+  background-color: var(--color-bg-hover);
+}
+
+.admin-table .actions-cell button {
+  margin-right: 5px;
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  border: 1px solid transparent;
+  font-size: 0.85rem;
+}
+
+.admin-table .actions-cell .edit-btn {
+  background-color: var(--color-secondary);
+  color: var(--color-text-primary);
+  border-color: #e0c992;
+}
+.admin-table .actions-cell .edit-btn:hover {
+  background-color: #e0c992;
+}
+
+.admin-table .actions-cell .delete-btn {
+  background-color: var(--color-danger);
+  color: var(--color-text-light);
+}
+.admin-table .actions-cell .delete-btn:hover {
+  background-color: var(--color-danger-dark);
+}
+
+.admin-table .actions-cell .view-btn {
+  background-color: var(--color-primary);
+  color: var(--color-text-light);
+}
+.admin-table .actions-cell .view-btn:hover {
+  background-color: var(--color-primary-dark);
+}
+
+.page-container {
+  padding: 20px;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.page-header h1 {
+  margin: 0;
+  font-size: 1.8rem;
+  color: var(--color-text-primary);
+}
+
+.page-header .add-button {
+  background-color: var(--color-primary);
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-weight: bold;
+}
+.page-header .add-button:hover {
+  background-color: var(--color-primary-dark);
+}
+
+.posts-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.post-card {
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 15px;
+  background-color: #fff;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
+}
+
+.post-card img {
+  width: 100%;
+  max-height: 200px;
+  object-fit: cover;
+  border-radius: 4px;
+  margin-bottom: 10px;
+}
+
+.post-card h3 {
+  margin-top: 0;
+  margin-bottom: 8px;
+  font-size: 1.2rem;
+  color: var(--color-primary);
+}
+
+.post-card p {
+  font-size: 0.9rem;
+  color: var(--color-text-secondary);
+  margin-bottom: 10px;
+  line-height: 1.5;
+  max-height: 6em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.post-card .post-meta {
+  font-size: 0.8rem;
+  color: var(--color-gray-dark);
+  margin-bottom: 15px;
+}
+
+.post-card .post-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.post-card .post-actions button {
+  padding: 6px 12px;
+  font-size: 0.85rem;
+}
+.post-card .post-content-summary {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-height: 4.5em;
+  line-height: 1.5em;
+}
+.post-card .post-meta span {
+  display: block;
+  margin-bottom: 5px;
+  font-size: 0.85rem;
+}
