@@ -1,0 +1,16 @@
+.dashboard-layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: var(--color-page-bg);
+}
+
+.dashboard-content {
+  flex-grow: 1;
+  padding: 20px;
+  background-color: var(--color-bg-content);
+  margin: 0 10px 10px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--color-border);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}

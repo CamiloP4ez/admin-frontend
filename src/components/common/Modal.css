@@ -1,0 +1,131 @@
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background-color: var(--color-bg-content);
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  min-width: 300px;
+  max-width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: 10px;
+  margin-bottom: 15px;
+}
+
+.modal-header h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  color: var(--color-text-primary);
+}
+
+.modal-close-button {
+  background: none;
+  border: none;
+  font-size: 1.8rem;
+  cursor: pointer;
+  color: var(--color-text-secondary);
+}
+.modal-close-button:hover {
+  color: var(--color-primary);
+}
+
+.modal-body {
+  padding-top: 10px;
+}
+
+/* Estilos para formularios dentro del modal */
+.modal-content form label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: bold;
+  color: var(--color-text-primary);
+}
+
+.modal-content form input[type="text"],
+.modal-content form input[type="email"],
+.modal-content form input[type="password"],
+.modal-content form textarea,
+.modal-content form select {
+  width: calc(100% - 20px);
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  box-sizing: border-box;
+  background-color: var(--color-bg-input);
+  color: var(--color-text-input);
+}
+.modal-content form textarea {
+  min-height: 80px;
+  resize: vertical;
+}
+
+.modal-content form button[type="submit"] {
+  background-color: var(--color-primary);
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.2s ease;
+}
+
+.modal-content form button[type="submit"]:hover {
+  background-color: var(--color-primary-dark);
+}
+
+.modal-content form .form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}
+.modal-content form .form-actions button {
+  padding: 8px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+.modal-content form .form-actions .cancel-button {
+  background-color: var(--color-gray-medium);
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-border);
+}
+.modal-content form .form-actions .cancel-button:hover {
+  background-color: var(--color-gray-light);
+}
+
+/* src/components/common/Modal.css o global.css */
+.form-check {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+.form-check input[type="checkbox"] {
+  margin-right: 8px;
+  width: auto; /* Override general input width if necessary */
+}
+.form-check label {
+  margin-bottom: 0; /* Override general label margin if necessary */
+  font-weight: normal;
+}
