@@ -1,4 +1,3 @@
-// src/contexts/AuthContext.tsx
 import React, { createContext, useState, useEffect, useCallback } from "react";
 import type { ReactNode } from "react";
 
@@ -6,7 +5,7 @@ import type { AuthResponseDto } from "../types/auth";
 
 interface AuthContextType {
   isAuthenticated: boolean;
-  user: AuthResponseDto | null; // Almacenaremos todo el AuthResponseDto
+  user: AuthResponseDto | null;
   token: string | null;
   login: (userData: AuthResponseDto) => void;
   logout: () => void;
