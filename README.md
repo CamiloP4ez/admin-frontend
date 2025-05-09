@@ -56,9 +56,3 @@ Log in with these credentials to access all administrative features, including t
     *   Managing roles for a user (as SuperAdmin) will open a dedicated modal.
 5.  **Logout:** Click the "Cerrar Sesión" (Logout) button in the navbar to end your session.
 
-## Further Development
-
-*   Implement user registration if admins need to create accounts directly.
-*   Add more detailed error handling and user feedback.
-*   Expand on post management features (e.g., comment moderation if applicable).
-*   Introduce unit and integration tests.
