@@ -3,7 +3,7 @@
 
 1.  **Clone the repository:**
     ```bash
-    git clone <your-repository-url>
+    git clone [<your-repository-url>](https://github.com/CamiloP4ez/admin-frontend.git)
     cd admin-frontend
     ```
 
