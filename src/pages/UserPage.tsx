@@ -123,6 +123,8 @@ const UsersPage: React.FC = () => {
             <th>Email</th>
             <th>Roles</th>
             <th>Estado</th>
+            <th>Seguidores</th>
+            <th>Siguiendo</th>
             <th>Registrado</th>
             <th>Publicaciones</th>
             <th>Acciones</th>
@@ -144,6 +146,8 @@ const UsersPage: React.FC = () => {
                   {user.enabled ? "Habilitado" : "Deshabilitado"}
                 </span>
               </td>
+              <td style={{ textAlign: "center" }}>{user.followersCount}</td>{" "}
+              <td style={{ textAlign: "center" }}>{user.followingCount}</td>{" "}
               <td>{new Date(user.createdAt).toLocaleDateString()}</td>
               <td style={{ textAlign: "center" }}>
                 <button

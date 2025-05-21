@@ -5,9 +5,13 @@ import { useAuth } from "../hooks/useAuth";
 import { loginUser } from "../services/authService";
 import GenericLogo from "../assets/lookLogo.png";
 import "./LoginPage.css";
+// Iconos (ejemplo, podrías usar react-icons o SVGs)
+// import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
+
 const LoginPage: React.FC = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false); // Nuevo estado
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const { login } = useAuth();
@@ -43,11 +47,15 @@ const LoginPage: React.FC = () => {
   return (
     <div className="login-page-container">
       <div className="login-form-container">
-        <img src={GenericLogo} alt="Logo" className="login-logo" />
+        <img
+          src={GenericLogo}
+          alt="Logo de la empresa"
+          className="login-logo"
+        />
         <h1 className="login-title">Login</h1>
         <form onSubmit={handleSubmit} className="login-form">
           <div className="form-group">
-            <label htmlFor="username">User</label>
+            <label htmlFor="username">Usuario</label> {/* Cambiado a español */}
             <input
               type="text"
               id="username"
@@ -55,20 +63,51 @@ const LoginPage: React.FC = () => {
               onChange={(e) => setUsername(e.target.value)}
               required
               autoComplete="username"
+              aria-describedby={error ? "login-error-message" : undefined}
             />
           </div>
-          <div className="form-group">
-            <label htmlFor="password">Password</label>
+          <div className="form-group password-group">
+            {" "}
+            {/* Clase para posicionar el botón */}
+            <label htmlFor="password">Contraseña</label>{" "}
+            {/* Cambiado a español */}
             <input
-              type="password"
+              type={showPassword ? "text" : "password"}
               id="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
               autoComplete="current-password"
+              aria-describedby={error ? "login-error-message" : undefined}
             />
+            <button
+              type="button"
+              className="password-toggle-button"
+              onClick={() => setShowPassword(!showPassword)}
+              aria-label={
+                showPassword ? "Ocultar contraseña" : "Mostrar contraseña"
+              }
+            >
+              {/* Idealmente usar un SVG o un componente de icono */}
+              {showPassword ? "🙈" : "👁️"}
+            </button>
           </div>
-          {error && <p className="error-message">{error}</p>}
+          {error && (
+            <p
+              id="login-error-message"
+              className="error-message"
+              role="alert"
+              aria-live="assertive"
+            >
+              {error}
+            </p>
+          )}
+          {/* Opcional: Enlace para "Olvidé mi contraseña" */}
+          <div className="form-options">
+            <a href="/forgot-password" className="forgot-password-link">
+              ¿Olvidaste tu contraseña?
+            </a>
+          </div>
           <button type="submit" className="login-button" disabled={isLoading}>
             {isLoading ? "Cargando..." : "Aceptar"}
           </button>

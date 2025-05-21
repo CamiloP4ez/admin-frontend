@@ -81,3 +81,67 @@
   background-color: var(--color-gray-medium);
   cursor: not-allowed;
 }
+.login-form .form-group input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 2px rgba(var(--rgb-primary), 0.2);
+}
+.password-group {
+  position: relative;
+}
+
+.password-toggle-button {
+  position: absolute;
+  right: 1px;
+  top: calc(50% + 8px);
+  transform: translateY(-30%);
+  background: transparent;
+  border: none;
+  padding: 10px;
+  cursor: pointer;
+  color: var(--color-text-secondary);
+  line-height: 1;
+}
+
+.password-toggle-button:hover,
+.password-toggle-button:focus {
+  color: var(--color-text-primary);
+}
+
+/* Para el input, añadir padding a la derecha para que el texto no se solape con el botón */
+.login-form .form-group.password-group input {
+  padding-right: 40px; /* Ajusta este valor según el tamaño del botón */
+}
+
+.form-options {
+  text-align: right;
+  margin-bottom: 20px;
+}
+
+.forgot-password-link {
+  font-size: 0.9rem;
+  color: var(--color-primary); /* Usa tu color primario o de enlace */
+  text-decoration: none;
+}
+
+.forgot-password-link:hover {
+  text-decoration: underline;
+}
+
+/* Estilo para el spinner (ejemplo básico) */
+.spinner {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: #fff; /* O el color del texto del botón */
+  animation: spin 1s ease-in-out infinite;
+  margin: 0 auto;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

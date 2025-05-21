@@ -137,6 +137,8 @@ const AdminsPage: React.FC = () => {
             <th>Email</th>
             <th>Roles Actuales</th>
             <th>Estado</th>
+            <th>Seguidores</th>
+            <th>Siguiendo</th>
             <th>Acciones</th>
           </tr>
         </thead>
@@ -156,6 +158,8 @@ const AdminsPage: React.FC = () => {
                   {user.enabled ? "Habilitado" : "Deshabilitado"}
                 </span>
               </td>
+              <td style={{ textAlign: "center" }}>{user.followersCount}</td>{" "}
+              <td style={{ textAlign: "center" }}>{user.followingCount}</td>{" "}
               <td className="actions-cell">
                 <button
                   onClick={() => handleOpenRolesModal(user)}

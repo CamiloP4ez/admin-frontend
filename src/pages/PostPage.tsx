@@ -5,16 +5,30 @@ import {
 } from "../services/postService";
 import EditPostModal from "../components/posts/EditPostModal";
 import type { PostResponseDto } from "../types/post";
+import ViewPostCommentsModal from "../components/posts/ViewPostCommentsModal";
+import ViewPostLikesModal from "../components/posts/ViewPostLikesModal";
 
 const PostsPage: React.FC = () => {
   const [posts, setPosts] = useState<PostResponseDto[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const [isCommentsModalOpen, setIsCommentsModalOpen] = useState(false);
+  const [isLikesModalOpen, setIsLikesModalOpen] = useState(false);
+
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedPost, setSelectedPost] = useState<PostResponseDto | null>(
     null
   );
+
+  const handleOpenCommentsModal = (post: PostResponseDto) => {
+    setSelectedPost(post);
+    setIsCommentsModalOpen(true);
+  };
+  const handleOpenLikesModal = (post: PostResponseDto) => {
+    setSelectedPost(post);
+    setIsLikesModalOpen(true);
+  };
 
   const fetchPosts = useCallback(async () => {
     setIsLoading(true);
@@ -106,7 +120,7 @@ const PostsPage: React.FC = () => {
               <span>
                 Publicado: {new Date(post.createdAt).toLocaleDateString()}
               </span>
-
+              <span>Por: {post.username || "Desconocido"}</span>{" "}
               <span>Likes: {post.likeCount}</span>
             </div>
             <div className="post-actions">
@@ -115,6 +129,24 @@ const PostsPage: React.FC = () => {
                 className="edit-btn"
               >
                 Editar
+              </button>
+              <button
+                onClick={() => handleOpenCommentsModal(post)}
+                className="view-btn"
+                style={{
+                  backgroundColor: "var(--color-primary-light, #7b6fbe)",
+                  color: "white",
+                }}
+              >
+                Comentarios
+              </button>
+              <button
+                onClick={() => handleOpenLikesModal(post)}
+                className="info-btn"
+                title="Ver quién dio like"
+                disabled={post.likeCount === 0}
+              >
+                ❤️
               </button>
               <button
                 onClick={() => handleDeletePost(post.id)}
@@ -133,6 +165,26 @@ const PostsPage: React.FC = () => {
           onClose={() => setIsEditModalOpen(false)}
           post={selectedPost}
           onPostUpdated={handlePostUpdated}
+        />
+      )}
+      {selectedPost && (
+        <ViewPostCommentsModal
+          isOpen={isCommentsModalOpen}
+          onClose={() => {
+            setIsCommentsModalOpen(false);
+            setSelectedPost(null);
+          }}
+          post={selectedPost}
+        />
+      )}
+      {selectedPost && (
+        <ViewPostLikesModal
+          isOpen={isLikesModalOpen}
+          onClose={() => {
+            setIsLikesModalOpen(false);
+            setSelectedPost(null);
+          }}
+          post={selectedPost}
         />
       )}
     </div>
