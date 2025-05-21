@@ -1,4 +1,5 @@
 import type { ApiResponseDto } from "../types/api";
+import type { LikeResponseDto } from "../types/like";
 import type { PostRequestDto, PostResponseDto } from "../types/post";
 import apiClient from "./apiClient";
 
@@ -69,4 +70,13 @@ export const deletePost = async (
     return;
   }
   return response.data as ApiResponseDto<null>;
+};
+
+export const getLikesForPost = async (
+  postId: string
+): Promise<ApiResponseDto<LikeResponseDto[]>> => {
+  const response = await apiClient.get<ApiResponseDto<LikeResponseDto[]>>(
+    `/v1/posts/${postId}/likes`
+  );
+  return response.data;
 };

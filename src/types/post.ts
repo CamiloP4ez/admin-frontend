@@ -7,10 +7,10 @@ export interface PostRequestDto {
 export interface PostResponseDto {
   id: string;
   userId: string;
+  username: string;
   title: string;
   content: string;
   imageUri: string | null;
   createdAt: string;
   likeCount: number;
-  authorUsername?: string;
 }

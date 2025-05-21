@@ -1,4 +1,3 @@
-// src/components/users/UserPostsModal.tsx
 import React, { useEffect, useState } from "react";
 import Modal from "../common/Modal";
 import { getPostsByUserId } from "../../services/postService";

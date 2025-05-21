@@ -1,3 +1,4 @@
+// src/types/api.ts
 export interface UserResponseDto {
   id: string;
   username: string;
@@ -6,6 +7,8 @@ export interface UserResponseDto {
   createdAt: string;
   roles: string[];
   enabled: boolean;
+  followersCount: number;
+  followingCount: number;
 }
 
 export interface UserUpdateRequestDto {
