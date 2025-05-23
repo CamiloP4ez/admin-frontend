@@ -8,6 +8,7 @@ import DashboardLayout from "../components/layout/DashboardLayout";
 import UsersPage from "../pages/UserPage";
 import PostsPage from "../pages/PostPage";
 import AdminsPage from "../pages/AdminPage";
+import CommentsPage from "../pages/CommentsPage";
 
 interface ProtectedRouteProps {
   element: JSX.Element;
@@ -50,6 +51,10 @@ const AppRouter: React.FC = () => {
             <Route
               path="posts"
               element={<ProtectedRoute element={<PostsPage />} />}
+            />
+            <Route
+              path="comments"
+              element={<ProtectedRoute element={<CommentsPage />} />}
             />
             <Route
               path="admins"

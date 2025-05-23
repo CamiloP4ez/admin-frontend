@@ -1,0 +1,10 @@
+.admin-table.comments-table td:nth-child(2) {
+  max-width: 400px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.admin-table.comments-table td:nth-child(2):hover {
+  white-space: normal;
+  overflow: visible;
+}

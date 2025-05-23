@@ -35,6 +35,12 @@ const Navbar: React.FC = () => {
         >
           Publicaciones
         </NavLink>
+        <NavLink
+          to="/comments"
+          className={({ isActive }) => (isActive ? "active" : "")}
+        >
+          Comentarios
+        </NavLink>
         {isSuperAdmin && (
           <NavLink
             to="/admins"
