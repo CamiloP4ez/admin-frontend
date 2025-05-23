@@ -7,11 +7,15 @@ import { useAuth } from "../hooks/useAuth";
 import UserPostsModal from "../components/users/UserPostModal";
 import EditUserModal from "../components/users/EditUsersModal";
 import type { UserResponseDto } from "../types/user";
+import ViewUserConnectionsModal from "../components/users/ViewUserConnectionsModal";
 
 const UsersPage: React.FC = () => {
   const [users, setUsers] = useState<UserResponseDto[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const [isFollowersModalOpen, setIsFollowersModalOpen] = useState(false);
+  const [isFollowingModalOpen, setIsFollowingModalOpen] = useState(false);
 
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isPostsModalOpen, setIsPostsModalOpen] = useState(false);
@@ -109,6 +113,14 @@ const UsersPage: React.FC = () => {
         Error: {error}
       </p>
     );
+  const handleOpenFollowersModal = (user: UserResponseDto) => {
+    setSelectedUser(user);
+    setIsFollowersModalOpen(true);
+  };
+  const handleOpenFollowingModal = (user: UserResponseDto) => {
+    setSelectedUser(user);
+    setIsFollowingModalOpen(true);
+  };
 
   return (
     <div className="page-container">
@@ -146,8 +158,27 @@ const UsersPage: React.FC = () => {
                   {user.enabled ? "Habilitado" : "Deshabilitado"}
                 </span>
               </td>
-              <td style={{ textAlign: "center" }}>{user.followersCount}</td>{" "}
-              <td style={{ textAlign: "center" }}>{user.followingCount}</td>{" "}
+              <td style={{ textAlign: "center" }}>
+                <button
+                  onClick={() => handleOpenFollowersModal(user)}
+                  className="link-like-button" // Un botón que parezca un enlace
+                  disabled={user.followersCount === 0}
+                  title="Ver seguidores"
+                >
+                  {user.followersCount}
+                </button>
+              </td>
+              <td style={{ textAlign: "center" }}>
+                <button
+                  onClick={() => handleOpenFollowingModal(user)}
+                  className="link-like-button"
+                  disabled={user.followingCount === 0}
+                  title="Ver a quién sigue"
+                >
+                  {user.followingCount}
+                </button>
+              </td>
+
               <td>{new Date(user.createdAt).toLocaleDateString()}</td>
               <td style={{ textAlign: "center" }}>
                 <button
@@ -196,6 +227,28 @@ const UsersPage: React.FC = () => {
           userId={selectedUser.id}
           username={selectedUser.username}
         />
+      )}
+      {selectedUser && ( // <--- NUEVOS MODALES
+        <>
+          <ViewUserConnectionsModal
+            isOpen={isFollowersModalOpen}
+            onClose={() => {
+              setIsFollowersModalOpen(false);
+              setSelectedUser(null);
+            }}
+            user={selectedUser}
+            type="followers"
+          />
+          <ViewUserConnectionsModal
+            isOpen={isFollowingModalOpen}
+            onClose={() => {
+              setIsFollowingModalOpen(false);
+              setSelectedUser(null);
+            }}
+            user={selectedUser}
+            type="following"
+          />
+        </>
       )}
     </div>
   );

@@ -75,3 +75,21 @@ export const updateMyProfile = async (
   );
   return response.data;
 };
+
+export const getFollowers = async (
+  userId: string
+): Promise<ApiResponseDto<UserResponseDto[]>> => {
+  const response = await apiClient.get<ApiResponseDto<UserResponseDto[]>>(
+    `/v1/users/${userId}/followers`
+  );
+  return response.data;
+};
+
+export const getFollowing = async (
+  userId: string
+): Promise<ApiResponseDto<UserResponseDto[]>> => {
+  const response = await apiClient.get<ApiResponseDto<UserResponseDto[]>>(
+    `/v1/users/${userId}/following`
+  );
+  return response.data;
+};
