@@ -1,4 +1,3 @@
-// src/services/commentService.ts
 import type { ApiResponseDto } from "../types/api";
 import type { CommentResponseDto } from "../types/comment";
 import apiClient from "./apiClient";
@@ -9,7 +8,7 @@ export const getAllComments = async (): Promise<
   const response = await apiClient.get<ApiResponseDto<CommentResponseDto[]>>(
     `/v1/comments`
   );
-  // Ordenar por fecha, más recientes primero (o como prefieras)
+
   if (response.data && Array.isArray(response.data.data)) {
     response.data.data.sort(
       (a, b) =>

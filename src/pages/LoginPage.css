@@ -108,9 +108,8 @@
   color: var(--color-text-primary);
 }
 
-/* Para el input, añadir padding a la derecha para que el texto no se solape con el botón */
 .login-form .form-group.password-group input {
-  padding-right: 40px; /* Ajusta este valor según el tamaño del botón */
+  padding-right: 40px;
 }
 
 .form-options {
@@ -120,7 +119,7 @@
 
 .forgot-password-link {
   font-size: 0.9rem;
-  color: var(--color-primary); /* Usa tu color primario o de enlace */
+  color: var(--color-primary);
   text-decoration: none;
 }
 
@@ -128,14 +127,13 @@
   text-decoration: underline;
 }
 
-/* Estilo para el spinner (ejemplo básico) */
 .spinner {
   display: inline-block;
   width: 1em;
   height: 1em;
   border: 2px solid rgba(255, 255, 255, 0.3);
   border-radius: 50%;
-  border-top-color: #fff; /* O el color del texto del botón */
+  border-top-color: #fff;
   animation: spin 1s ease-in-out infinite;
   margin: 0 auto;
 }

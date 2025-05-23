@@ -85,8 +85,6 @@
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 20px;
 }
-/* src/pages/DashboardPage.css */
-/* ... (estilos existentes para stats-grid, recent-activity-section, quick-links-section) ... */
 
 .charts-section {
   margin-bottom: 40px;
@@ -102,10 +100,7 @@
 
 .charts-grid {
   display: grid;
-  grid-template-columns: repeat(
-    auto-fit,
-    minmax(400px, 1fr)
-  ); /* Ajusta minmax según necesidad */
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
   gap: 25px;
 }
 
@@ -124,9 +119,8 @@
   text-align: center;
 }
 
-/* Estilos para los ejes de Recharts si es necesario */
 .recharts-cartesian-axis-tick-value tspan {
-  font-size: 0.8rem; /* Ajusta el tamaño de la fuente de los ticks */
+  font-size: 0.8rem;
 }
 .recharts-legend-item-text {
   font-size: 0.9rem;

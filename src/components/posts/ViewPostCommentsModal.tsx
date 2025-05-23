@@ -1,11 +1,10 @@
-// src/components/posts/ViewPostCommentsModal.tsx
 import React, { useEffect, useState, useCallback } from "react";
 import Modal from "../common/Modal";
 import {
   getCommentsByPostId,
   deleteComment as deleteCommentService,
 } from "../../services/commentService";
-import "./ViewPostCommentsModal.css"; // Crear este CSS
+import "./ViewPostCommentsModal.css";
 import type { PostResponseDto } from "../../types/post";
 import type { CommentResponseDto } from "../../types/comment";
 
@@ -59,7 +58,6 @@ const ViewPostCommentsModal: React.FC<ViewPostCommentsModalProps> = ({
       try {
         await deleteCommentService(commentId);
         setComments((prev) => prev.filter((c) => c.id !== commentId));
-        // Opcional: mostrar un mensaje de éxito
       } catch (err: unknown) {
         if (err instanceof Error) {
           setError(err.message || "Ocurrió un error.");

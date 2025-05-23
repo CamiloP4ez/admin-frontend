@@ -8,6 +8,7 @@ import type { PostResponseDto } from "../types/post";
 import ViewPostCommentsModal from "../components/posts/ViewPostCommentsModal";
 import ViewPostLikesModal from "../components/posts/ViewPostLikesModal";
 import { getUserById } from "../services/userService";
+import "./PostPage.css";
 
 const PostsPage: React.FC = () => {
   const [posts, setPosts] = useState<PostResponseDto[]>([]);
@@ -29,7 +30,6 @@ const PostsPage: React.FC = () => {
     >
   >({});
 
-  // New state for filtering
   const [filterQuery, setFilterQuery] = useState("");
   const [filteredPosts, setFilteredPosts] = useState<PostResponseDto[]>([]);
 
@@ -49,16 +49,15 @@ const PostsPage: React.FC = () => {
       const response = await getAllPosts();
       if (response.data && response.code === 200) {
         setPosts(response.data);
-        // setFilteredPosts(response.data); // Initialize filteredPosts here or in useEffect
       } else {
         setError(response.message || "Error al cargar las publicaciones.");
       }
     } catch (err: unknown) {
-      console.error("Error fetching posts:", err); // Updated console log
+      console.error("Error fetching posts:", err);
       if (err instanceof Error) {
         setError(err.message);
       } else {
-        setError("Ocurrió un error al cargar las publicaciones."); // More specific error
+        setError("Ocurrió un error al cargar las publicaciones.");
       }
     } finally {
       setIsLoading(false);
@@ -69,7 +68,6 @@ const PostsPage: React.FC = () => {
     fetchPosts();
   }, [fetchPosts]);
 
-  // Effect for fetching author data
   useEffect(() => {
     posts.forEach((post) => {
       if (
@@ -120,9 +118,8 @@ const PostsPage: React.FC = () => {
           });
       }
     });
-  }, [posts, authorsData]); // authorsData dependency prevents infinite loop if an error occurs and we retry
+  }, [posts, authorsData]);
 
-  // Effect for filtering posts
   useEffect(() => {
     if (!filterQuery) {
       setFilteredPosts(posts);
@@ -148,30 +145,27 @@ const PostsPage: React.FC = () => {
   };
 
   const handlePostUpdated = (updatedPost: PostResponseDto) => {
-    // Update both original posts and filtered posts
     const newPosts = posts.map((p) =>
       p.id === updatedPost.id ? updatedPost : p
     );
     setPosts(newPosts);
-    // The filtering useEffect will automatically update filteredPosts
   };
 
   const handleDeletePost = async (postIdToDelete: string) => {
     if (
       window.confirm("¿Estás seguro de que quieres eliminar esta publicación?")
     ) {
-      setIsLoading(true); // Set loading true during deletion
+      setIsLoading(true);
       try {
         await deletePostService(postIdToDelete);
         const newPosts = posts.filter((p) => p.id !== postIdToDelete);
         setPosts(newPosts);
-        // The filtering useEffect will automatically update filteredPosts
       } catch (err: unknown) {
-        console.error("Error deleting post:", err); // Updated console log
         if (err instanceof Error) {
-          setError(err.message);
-        } else {
-          setError("Ocurrió un error al eliminar la publicación."); // More specific error
+          const errorMessage =
+            err.message || "Error al eliminar el comentario.";
+          setError(errorMessage);
+          alert(errorMessage);
         }
       } finally {
         setIsLoading(false);
@@ -179,62 +173,51 @@ const PostsPage: React.FC = () => {
     }
   };
 
-  if (isLoading && posts.length === 0) return <p>Cargando publicaciones...</p>;
-  if (error && posts.length === 0)
-    // Only show full page error if no posts are loaded
-    return (
-      <p className="error-message" style={{ color: "var(--color-danger)" }}>
-        {error}
-      </p>
-    );
+  const closeModalAndClearSelection = () => {
+    setIsEditModalOpen(false);
+    setIsCommentsModalOpen(false);
+    setIsLikesModalOpen(false);
+    setSelectedPost(null);
+  };
+
+  if (isLoading && posts.length === 0)
+    return <p className="loading-message">Cargando publicaciones...</p>;
 
   return (
-    <div className="page-container">
+    <div className="page-container posts-page">
       <div className="page-header">
         <h1>Gestión de Publicaciones</h1>
-        {/* <button className="add-button">Crear Publicación</button> */}
+        {/* <button className="btn btn-primary">Crear Publicación</button> */}
       </div>
-      <div
-        className="filter-container"
-        style={{
-          marginBottom: "20px",
-          display: "flex",
-          justifyContent: "center",
-        }}
-      >
+
+      <div className="filter-container">
         <input
           type="text"
           placeholder="Filtrar por título, contenido o autor..."
           value={filterQuery}
           onChange={(e) => setFilterQuery(e.target.value)}
-          style={{
-            padding: "10px",
-            width: "50%",
-            minWidth: "250px",
-            borderRadius: "var(--border-radius-md)",
-            border: "1px solid var(--color-grey-light)",
-          }}
+          className="filter-input"
         />
       </div>
-      {isLoading && posts.length > 0 && <p>Actualizando publicaciones...</p>}{" "}
-      {/* Show if loading more/updating */}
-      {error && posts.length > 0 && (
-        <p className="error-message" style={{ color: "var(--color-warning)" }}>
-          Error: {error}
-        </p>
-      )}{" "}
-      {/* Show non-blocking error */}
+
+      {error && <p className="error-message">Error: {error}</p>}
+
+      {isLoading && posts.length > 0 && (
+        <p className="loading-inline-message">Actualizando publicaciones...</p>
+      )}
+
       {!isLoading && posts.length === 0 && !error && (
-        <p>No hay publicaciones para mostrar.</p>
+        <p className="info-message">No hay publicaciones para mostrar.</p>
       )}
       {!isLoading &&
         posts.length > 0 &&
         filteredPosts.length === 0 &&
         filterQuery && (
-          <p>
+          <p className="info-message">
             No se encontraron publicaciones que coincidan con "{filterQuery}".
           </p>
         )}
+
       <div className="posts-list">
         {filteredPosts.map((post) => {
           const authorInfo = authorsData[post.userId];
@@ -256,59 +239,66 @@ const PostsPage: React.FC = () => {
 
           return (
             <div key={post.id} className="post-card">
-              {post.imageUri && <img src={post.imageUri} alt={post.title} />}
-              <h3>{post.title}</h3>
-              <p className="post-content-summary">{post.content}</p>
-              <div className="post-meta">
-                <span>
-                  Publicado: {new Date(post.createdAt).toLocaleDateString()}
-                </span>
-                <span>Por: {authorDisplay}</span>
-                <span>Likes: {post.likeCount}</span>
-              </div>
-              <div className="post-actions">
-                <button
-                  onClick={() => handleOpenEditModal(post)}
-                  className="edit-btn"
-                >
-                  Editar
-                </button>
-                <button
-                  onClick={() => handleOpenCommentsModal(post)}
-                  className="view-btn"
-                  style={{
-                    backgroundColor: "var(--color-primary-light, #7b6fbe)",
-                    color: "white",
-                  }}
-                >
-                  Comentarios
-                </button>
-                <button
-                  onClick={() => handleOpenLikesModal(post)}
-                  className="info-btn"
-                  title="Ver quién dio like"
-                  disabled={post.likeCount === 0}
-                >
-                  ❤️
-                </button>
-                <button
-                  onClick={() => handleDeletePost(post.id)}
-                  className="delete-btn"
-                >
-                  Borrar
-                </button>
+              {post.imageUri && (
+                <div className="post-card-image-container">
+                  <img
+                    src={post.imageUri}
+                    alt={post.title}
+                    className="post-card-image"
+                  />
+                </div>
+              )}
+              <div className="post-card-content">
+                <h3 className="post-card-title">{post.title}</h3>
+                <p className="post-content-summary">{post.content}</p>
+                <div className="post-meta">
+                  <span>
+                    Publicado: {new Date(post.createdAt).toLocaleDateString()}
+                  </span>
+                  <span className="post-author">Por: {authorDisplay}</span>
+                  <span>Likes: {post.likeCount}</span>
+                </div>
+                <div className="post-actions">
+                  <button
+                    onClick={() => handleOpenEditModal(post)}
+                    className="btn btn-primary btn-small"
+                    title="Editar publicación"
+                  >
+                    <span className="icon-edit">✎</span> Editar
+                  </button>
+                  <button
+                    onClick={() => handleOpenCommentsModal(post)}
+                    className="btn btn-secondary btn-small"
+                    title="Ver comentarios"
+                  >
+                    <span className="icon-comment">💬</span> Comentarios
+                  </button>
+                  <button
+                    onClick={() => handleOpenLikesModal(post)}
+                    className="btn btn-secondary btn-small btn-icon"
+                    title="Ver Me Gusta"
+                    disabled={post.likeCount === 0}
+                  >
+                    ❤️ <span className="sr-only">Me gusta</span>
+                  </button>
+                  <button
+                    onClick={() => handleDeletePost(post.id)}
+                    className="btn btn-danger btn-small"
+                    title="Borrar publicación"
+                  >
+                    <span className="icon-delete">🗑</span> Borrar
+                  </button>
+                </div>
               </div>
             </div>
           );
         })}
       </div>
+
       {selectedPost && (
         <EditPostModal
           isOpen={isEditModalOpen}
-          onClose={() => {
-            setIsEditModalOpen(false);
-            setSelectedPost(null); // Clear selected post on close
-          }}
+          onClose={closeModalAndClearSelection}
           post={selectedPost}
           onPostUpdated={handlePostUpdated}
         />
@@ -316,20 +306,14 @@ const PostsPage: React.FC = () => {
       {selectedPost && typeof ViewPostCommentsModal !== "undefined" && (
         <ViewPostCommentsModal
           isOpen={isCommentsModalOpen}
-          onClose={() => {
-            setIsCommentsModalOpen(false);
-            setSelectedPost(null); // Clear selected post on close
-          }}
+          onClose={closeModalAndClearSelection}
           post={selectedPost}
         />
       )}
       {selectedPost && typeof ViewPostLikesModal !== "undefined" && (
         <ViewPostLikesModal
           isOpen={isLikesModalOpen}
-          onClose={() => {
-            setIsLikesModalOpen(false);
-            setSelectedPost(null); // Clear selected post on close
-          }}
+          onClose={closeModalAndClearSelection}
           post={selectedPost}
         />
       )}

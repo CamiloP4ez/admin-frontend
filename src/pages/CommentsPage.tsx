@@ -60,11 +60,17 @@ const CommentsPage: React.FC = () => {
       try {
         await deleteCommentService(commentId);
         setAllComments((prev) => prev.filter((c) => c.id !== commentId));
+        setSelectedCommentIds((prevSelected) => {
+          const newSelected = new Set(prevSelected);
+          newSelected.delete(commentId);
+          return newSelected;
+        });
       } catch (err: unknown) {
         if (err instanceof Error) {
-          setError(err.message || `Ocurrió un error.`);
-        } else {
-          setError(`Ocurrió un error desconocido.`);
+          const errorMessage =
+            err.message || "Error al eliminar el comentario.";
+          setError(errorMessage);
+          alert(errorMessage);
         }
       }
     }
@@ -99,11 +105,11 @@ const CommentsPage: React.FC = () => {
 
   const handleSelectAllVisibleComments = () => {
     const visibleCommentIds = filteredComments.map((c) => c.id);
-    const allVisibleSelected = visibleCommentIds.every((id) =>
-      selectedCommentIds.has(id)
-    );
+    const allVisibleSelected =
+      visibleCommentIds.length > 0 &&
+      visibleCommentIds.every((id) => selectedCommentIds.has(id));
 
-    if (allVisibleSelected && visibleCommentIds.length > 0) {
+    if (allVisibleSelected) {
       setSelectedCommentIds((prevSelected) => {
         const newSelected = new Set(prevSelected);
         visibleCommentIds.forEach((id) => newSelected.delete(id));
@@ -130,9 +136,9 @@ const CommentsPage: React.FC = () => {
       )
     ) {
       setIsDeletingMultiple(true);
+      setError(null);
       let successCount = 0;
-      let errorCount = 0;
-      const errors: string[] = [];
+      const errorMessages: string[] = [];
 
       for (const commentId of selectedCommentIds) {
         try {
@@ -140,26 +146,33 @@ const CommentsPage: React.FC = () => {
           successCount++;
         } catch (err: unknown) {
           if (err instanceof Error) {
-            errors.push(`Error al borrar ${commentId}: ${err.message}`);
-            errorCount++;
-            console.error(`Error deleting comment ${commentId}:`, err);
+            const errorMessage =
+              err.message || "Error al eliminar el comentario.";
+            setError(errorMessage);
+            alert(errorMessage);
           }
         }
       }
 
       setIsDeletingMultiple(false);
 
-      if (errorCount > 0) {
+      if (errorMessages.length > 0) {
         alert(
-          `Se eliminaron ${successCount} comentarios.\n${errorCount} comentarios no pudieron ser eliminados.\nErrores:\n${errors
+          `Se eliminaron ${successCount} comentarios.\n${
+            errorMessages.length
+          } comentarios no pudieron ser eliminados.\nErrores:\n${errorMessages
             .slice(0, 5)
-            .join("\n")}${errors.length > 5 ? "\n..." : ""}`
+            .join("\n")}${errorMessages.length > 5 ? "\n..." : ""}`
+        );
+        setError(
+          `Algunos comentarios no pudieron ser eliminados. ${errorMessages.join(
+            "; "
+          )}`
         );
       } else {
         alert(`${successCount} comentario(s) eliminado(s) exitosamente.`);
       }
 
-      // Actualizar la lista de comentarios y limpiar selección
       setAllComments((prev) =>
         prev.filter((c) => !selectedCommentIds.has(c.id))
       );
@@ -168,35 +181,23 @@ const CommentsPage: React.FC = () => {
   };
 
   if (isLoading && allComments.length === 0)
-    return <p>Cargando todos los comentarios...</p>;
-  if (error)
-    return (
-      <p className="error-message" style={{ color: "var(--color-danger)" }}>
-        {error}
-      </p>
-    );
+    return <p className="loading-message">Cargando todos los comentarios...</p>;
+
   const areAllVisibleSelected =
     filteredComments.length > 0 &&
     filteredComments.every((c) => selectedCommentIds.has(c.id));
 
   return (
-    <div className="page-container">
-      <div
-        className="page-header"
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-        }}
-      >
+    <div className="page-container comments-page">
+      <div className="page-header">
         <h1>Gestión Global de Comentarios</h1>
-        {selectedCommentIds.size > 0 && ( // Mostrar botón solo si hay selecciones
+        {selectedCommentIds.size > 0 && (
           <button
             onClick={handleDeleteSelectedComments}
-            className="delete-btn" // Reutilizar estilo o crear uno específico
+            className="btn btn-danger"
             disabled={isDeletingMultiple}
-            style={{ backgroundColor: "var(--color-danger)", color: "white" }}
           >
+            <span className="icon-delete">🗑️</span>
             {isDeletingMultiple
               ? `Borrando ${selectedCommentIds.size}...`
               : `Borrar ${selectedCommentIds.size} Seleccionado(s)`}
@@ -204,146 +205,131 @@ const CommentsPage: React.FC = () => {
         )}
       </div>
 
-      <div
-        className="filters-container"
-        style={{
-          display: "flex",
-          gap: "20px",
-          marginBottom: "20px",
-          padding: "15px",
-          backgroundColor: "#f8f9fa",
-          borderRadius: "5px",
-          border: "1px solid var(--color-border)",
-        }}
-      >
-        {/* ... (filtros sin cambios) ... */}
-        <div>
-          <label
-            htmlFor="filterAuthor"
-            style={{ display: "block", marginBottom: "5px" }}
-          >
-            Filtrar por Autor:
-          </label>
+      {error && !isDeletingMultiple && (
+        <p className="error-message">Error: {error}</p>
+      )}
+
+      <div className="filters-container">
+        <div className="filter-item">
+          <label htmlFor="filterAuthor">Filtrar por Autor:</label>
           <input
             type="text"
             id="filterAuthor"
+            className="filter-input"
             placeholder="Nombre de usuario..."
             value={filterAuthor}
             onChange={(e) => setFilterAuthor(e.target.value)}
-            style={{
-              padding: "8px",
-              borderRadius: "4px",
-              border: "1px solid var(--color-border)",
-            }}
           />
         </div>
-        <div>
-          <label
-            htmlFor="filterContent"
-            style={{ display: "block", marginBottom: "5px" }}
-          >
-            Filtrar por Contenido:
-          </label>
+        <div className="filter-item">
+          <label htmlFor="filterContent">Filtrar por Contenido:</label>
           <input
             type="text"
             id="filterContent"
+            className="filter-input"
             placeholder="Palabra clave en comentario..."
             value={filterContent}
             onChange={(e) => setFilterContent(e.target.value)}
-            style={{
-              padding: "8px",
-              borderRadius: "4px",
-              border: "1px solid var(--color-border)",
-            }}
           />
         </div>
       </div>
 
-      {isLoading && <p>Filtrando/Cargando comentarios...</p>}
-      {filteredComments.length === 0 && !isLoading && (
-        <p>
+      {isLoading && allComments.length > 0 && (
+        <p className="loading-inline-message">Actualizando comentarios...</p>
+      )}
+
+      {!isLoading && filteredComments.length === 0 && (
+        <p className="info-message">
           No se encontraron comentarios con los filtros actuales o no hay
-          comentarios.
+          comentarios para mostrar.
         </p>
       )}
 
       {filteredComments.length > 0 && (
-        <table className="admin-table comments-table">
-          <thead>
-            <tr>
-              <th style={{ width: "30px", textAlign: "center" }}>
-                <input
-                  type="checkbox"
-                  title={
-                    areAllVisibleSelected
-                      ? "Deseleccionar todos los visibles"
-                      : "Seleccionar todos los visibles"
-                  }
-                  checked={areAllVisibleSelected}
-                  onChange={handleSelectAllVisibleComments}
-                  disabled={filteredComments.length === 0}
-                />
-              </th>
-              <th>Autor</th>
-              <th>Comentario</th>
-              <th>En Post ID</th>
-              <th>Fecha</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredComments.map((comment) => (
-              <tr
-                key={comment.id}
-                className={
-                  selectedCommentIds.has(comment.id) ? "selected-row" : ""
-                }
-              >
-                <td style={{ textAlign: "center" }}>
+        <div className="table-responsive-container">
+          <table className="data-table comments-table">
+            <thead>
+              <tr>
+                <th className="cell-checkbox select-all-checkbox-header">
                   <input
                     type="checkbox"
-                    checked={selectedCommentIds.has(comment.id)}
-                    onChange={() => handleSelectComment(comment.id)}
+                    title={
+                      areAllVisibleSelected
+                        ? "Deseleccionar todos los visibles"
+                        : "Seleccionar todos los visibles"
+                    }
+                    checked={areAllVisibleSelected}
+                    onChange={handleSelectAllVisibleComments}
+                    disabled={filteredComments.length === 0}
                   />
-                </td>
-                <td>{comment.authorUsername}</td>
-                <td
-                  title={comment.content}
-                  style={{
-                    maxWidth: "400px",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                    whiteSpace: "nowrap",
+                </th>
+                <th>Autor</th>
+                <th className="cell-comment-content-header">Comentario</th>
+                <th>En Post ID</th>
+                <th>Fecha</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredComments.map((comment) => (
+                <tr
+                  key={comment.id}
+                  className={
+                    selectedCommentIds.has(comment.id) ? "selected-row" : ""
+                  }
+                  onClick={(e) => {
+                    const target = e.target as HTMLElement;
+                    if (
+                      target.tagName !== "BUTTON" &&
+                      !target.closest("button") &&
+                      target.tagName !== "INPUT"
+                    ) {
+                      handleSelectComment(comment.id);
+                    }
                   }}
                 >
-                  {comment.content}
-                </td>
-                <td>{comment.postId}</td>
-                <td>{new Date(comment.createdAt).toLocaleString()}</td>
-                <td className="actions-cell">
-                  <button
-                    onClick={() =>
-                      handleDeleteComment(comment.id, comment.content)
-                    }
-                    className="delete-btn"
+                  <td className="cell-checkbox" data-label="Seleccionar">
+                    <input
+                      type="checkbox"
+                      checked={selectedCommentIds.has(comment.id)}
+                      onChange={() => handleSelectComment(comment.id)}
+                      onClick={(e) => e.stopPropagation()}
+                    />
+                  </td>
+                  <td data-label="Autor">{comment.authorUsername}</td>
+                  <td
+                    data-label="Comentario"
+                    title={comment.content}
+                    className="cell-comment-content"
                   >
-                    Borrar
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+                    {comment.content}
+                  </td>
+                  <td data-label="Post ID">{comment.postId}</td>
+                  <td data-label="Fecha">
+                    {new Date(comment.createdAt).toLocaleString()}
+                  </td>
+                  <td data-label="Acciones" className="actions-cell">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDeleteComment(comment.id, comment.content);
+                      }}
+                      className="btn btn-danger btn-small"
+                      title="Borrar comentario"
+                    >
+                      <span className="icon-delete">🗑️</span> Borrar
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
       {filteredComments.length > 15 && (
-        <p
-          style={{
-            textAlign: "center",
-            marginTop: "10px",
-            fontStyle: "italic",
-          }}
-        >
-          Considerar añadir paginación para muchos resultados.
+        <p className="pagination-suggestion">
+          Considerar añadir paginación para mejorar el rendimiento con muchos
+          resultados.
         </p>
       )}
     </div>

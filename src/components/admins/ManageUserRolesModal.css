@@ -1,0 +1,125 @@
+.manage-roles-modal-content {
+  padding: 5px;
+}
+
+.manage-roles-modal-content p.instruction-text {
+  font-size: 1em;
+  color: var(--color-text-on-light);
+  margin-bottom: 15px;
+}
+
+.roles-checkbox-group {
+  margin-bottom: 25px;
+  padding: 15px;
+  border: 1px solid var(--color-border-soft);
+  border-radius: 6px;
+  background-color: var(--color-background-main);
+}
+
+.roles-checkbox-group .form-check {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+  padding: 8px;
+  border-radius: 4px;
+  transition: background-color 0.2s ease-in-out;
+}
+.roles-checkbox-group .form-check:last-child {
+  margin-bottom: 0;
+}
+
+.roles-checkbox-group .form-check:hover {
+  background-color: var(--color-background-accent);
+}
+
+.roles-checkbox-group .form-check input[type="checkbox"] {
+  margin-right: 10px;
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  accent-color: var(--color-primary-main);
+}
+.roles-checkbox-group .form-check input[type="checkbox"]:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.roles-checkbox-group .form-check label {
+  font-weight: normal;
+  color: var(--color-text-on-light);
+  cursor: pointer;
+  font-size: 0.95em;
+  flex-grow: 1;
+}
+
+.superadmin-notice {
+  font-style: italic;
+  color: #555;
+  background-color: var(--color-background-accent);
+  padding: 10px 15px;
+  border-radius: 4px;
+  margin-top: 10px;
+  margin-bottom: 20px;
+  font-size: 0.9em;
+  border-left: 3px solid var(--color-primary-main);
+}
+
+.manage-roles-modal-content .error-message {
+  background-color: #fff0f1;
+  color: var(--color-primary-accent);
+  border: 1px solid var(--color-primary-accent);
+  padding: 10px 15px;
+  border-radius: 6px;
+  margin-bottom: 20px;
+  font-size: 0.9em;
+  text-align: center;
+}
+
+.manage-roles-modal-content .form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 25px;
+  padding-top: 15px;
+  border-top: 1px solid var(--color-border-soft);
+}
+
+.manage-roles-modal-content .form-actions button {
+  padding: 10px 20px;
+  border-radius: 5px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+  border: 1px solid transparent;
+}
+.manage-roles-modal-content .form-actions button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.manage-roles-modal-content .form-actions button[type="submit"] {
+  background-color: var(--color-primary-main);
+  color: var(--color-text-on-dark);
+}
+.manage-roles-modal-content
+  .form-actions
+  button[type="submit"]:hover:not(:disabled) {
+  background-color: #3e336b;
+}
+
+.manage-roles-modal-content .form-actions button[type="button"].btn-cancel {
+  background-color: #f0f0f0;
+  color: var(--color-text-on-light);
+  border-color: #d9d9d9;
+}
+.manage-roles-modal-content
+  .form-actions
+  button[type="button"].btn-cancel:hover:not(:disabled) {
+  background-color: #e7e7e7;
+}
+.manage-roles-modal-content
+  .form-actions
+  button[type="button"].btn-cancel:disabled {
+  background-color: #f0f0f0;
+  color: var(--color-text-on-light);
+}

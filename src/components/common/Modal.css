@@ -52,7 +52,6 @@
   padding-top: 10px;
 }
 
-/* Estilos para formularios dentro del modal */
 .modal-content form label {
   display: block;
   margin-bottom: 8px;
@@ -115,7 +114,6 @@
   background-color: var(--color-gray-light);
 }
 
-/* src/components/common/Modal.css o global.css */
 .form-check {
   display: flex;
   align-items: center;
@@ -123,9 +121,9 @@
 }
 .form-check input[type="checkbox"] {
   margin-right: 8px;
-  width: auto; /* Override general input width if necessary */
+  width: auto;
 }
 .form-check label {
-  margin-bottom: 0; /* Override general label margin if necessary */
+  margin-bottom: 0;
   font-weight: normal;
 }

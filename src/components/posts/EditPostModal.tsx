@@ -1,4 +1,3 @@
-// src/components/posts/EditPostModal.tsx
 import React, { useState, useEffect } from "react";
 import type { FormEvent } from "react";
 import Modal from "../common/Modal";
@@ -20,7 +19,7 @@ const EditPostModal: React.FC<EditPostModalProps> = ({
 }) => {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
-  const [imageUri, setImageUri] = useState<string | null>(""); // Puede ser null
+  const [imageUri, setImageUri] = useState<string | null>("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -28,7 +27,7 @@ const EditPostModal: React.FC<EditPostModalProps> = ({
     if (post) {
       setTitle(post.title);
       setContent(post.content);
-      setImageUri(post.imageUri || ""); // Manejar null como string vacío para el input
+      setImageUri(post.imageUri || "");
       setError(null);
     }
   }, [post]);
@@ -43,7 +42,7 @@ const EditPostModal: React.FC<EditPostModalProps> = ({
     const postData: PostRequestDto = {
       title: title.trim(),
       content: content.trim(),
-      // Enviar null si el campo está vacío y la API lo espera así para quitar la imagen
+
       imageUri: imageUri && imageUri.trim() !== "" ? imageUri.trim() : null,
     };
 
@@ -104,7 +103,7 @@ const EditPostModal: React.FC<EditPostModalProps> = ({
           <input
             type="text"
             id="postImageUri"
-            value={imageUri || ""} // Controlar input con string vacío si es null
+            value={imageUri || ""}
             onChange={(e) => setImageUri(e.target.value)}
             placeholder="http://ejemplo.com/imagen.jpg"
             disabled={isLoading}

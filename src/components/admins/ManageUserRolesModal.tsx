@@ -1,4 +1,3 @@
-// src/components/admins/ManageUserRolesModal.tsx
 import React, { useState, useEffect } from "react";
 import type { FormEvent } from "react";
 import Modal from "../common/Modal";
@@ -7,9 +6,9 @@ import type {
   UserResponseDto,
   UserRoleUpdateRequestDto,
 } from "../../types/user";
+import "./ManageUserRolesModal.css";
 
-// Definir los roles disponibles que se pueden gestionar
-const AVAILABLE_ROLES = ["ROLE_USER", "ROLE_ADMIN"]; // SUPERADMIN no se gestiona aquí
+const AVAILABLE_ROLES = ["ROLE_USER", "ROLE_ADMIN"];
 
 interface ManageUserRolesModalProps {
   isOpen: boolean;
@@ -30,7 +29,6 @@ const ManageUserRolesModal: React.FC<ManageUserRolesModalProps> = ({
 
   useEffect(() => {
     if (user) {
-      // Filtramos para solo mostrar los roles gestionables
       setSelectedRoles(
         user.roles.filter((role) => AVAILABLE_ROLES.includes(role))
       );
@@ -48,28 +46,24 @@ const ManageUserRolesModal: React.FC<ManageUserRolesModalProps> = ({
     e.preventDefault();
     if (!user) return;
 
-    // Asegurarse de que al menos ROLE_USER esté presente si es un rol gestionable
+    const tempSelectedRoles = [...selectedRoles];
+
     if (
-      !selectedRoles.includes("ROLE_USER") &&
+      !tempSelectedRoles.includes("ROLE_USER") &&
       AVAILABLE_ROLES.includes("ROLE_USER")
     ) {
       alert("Un usuario debe tener al menos el rol USER.");
-      // O añadirlo automáticamente:
-      // if (!tempSelectedRoles.includes('ROLE_USER')) {
-      //   tempSelectedRoles.push('ROLE_USER');
-      // }
+
       return;
     }
 
-    // Mantener roles no gestionables (como SUPERADMIN) si el usuario ya los tiene
     const finalRoles = new Set<string>();
     user.roles.forEach((role) => {
       if (!AVAILABLE_ROLES.includes(role)) {
-        // Si es un rol como SUPERADMIN
         finalRoles.add(role);
       }
     });
-    selectedRoles.forEach((role) => finalRoles.add(role));
+    tempSelectedRoles.forEach((role) => finalRoles.add(role));
 
     setIsLoading(true);
     setError(null);
@@ -89,12 +83,10 @@ const ManageUserRolesModal: React.FC<ManageUserRolesModalProps> = ({
         );
       }
     } catch (err: unknown) {
-      console.error("Error updating user status:", err);
-
       if (err instanceof Error) {
-        setError(err.message);
-      } else {
-        setError("Ocurrió un error al actualizar el usuario.");
+        const errorMessage = err.message || "Error al eliminar el comentario.";
+        setError(errorMessage);
+        alert(errorMessage);
       }
     } finally {
       setIsLoading(false);
@@ -109,23 +101,22 @@ const ManageUserRolesModal: React.FC<ManageUserRolesModalProps> = ({
       onClose={onClose}
       title={`Gestionar Roles de ${user.username}`}
     >
-      <form onSubmit={handleSubmit}>
-        <p>Selecciona los roles para el usuario:</p>
-        <div className="roles-checkbox-group" style={{ marginBottom: "20px" }}>
+      <form onSubmit={handleSubmit} className="manage-roles-modal-content">
+        <p className="instruction-text">
+          Selecciona los roles para el usuario:
+        </p>
+        <div className="roles-checkbox-group">
           {AVAILABLE_ROLES.map((role) => (
             <div key={role} className="form-check">
               <input
                 type="checkbox"
-                id={`role-${role}`}
+                id={`role-${role}-${user.id}`}
                 value={role}
                 checked={selectedRoles.includes(role)}
                 onChange={() => handleRoleChange(role)}
                 disabled={isLoading}
               />
-              <label
-                htmlFor={`role-${role}`}
-                style={{ marginLeft: "8px", fontWeight: "normal" }}
-              >
+              <label htmlFor={`role-${role}-${user.id}`}>
                 {role.replace("ROLE_", "")}
               </label>
             </div>
@@ -133,35 +124,27 @@ const ManageUserRolesModal: React.FC<ManageUserRolesModalProps> = ({
         </div>
 
         {user.roles.includes("ROLE_SUPERADMIN") && (
-          <p
-            style={{
-              fontStyle: "italic",
-              color: "var(--color-text-secondary)",
-            }}
-          >
+          <p className="superadmin-notice">
             El rol SUPERADMIN no se puede modificar desde esta interfaz.
           </p>
         )}
 
-        {error && (
-          <p
-            className="error-message"
-            style={{ color: "var(--color-danger)", marginBottom: "10px" }}
-          >
-            {error}
-          </p>
-        )}
+        {error && <p className="error-message">{error}</p>}
 
         <div className="form-actions">
           <button
             type="button"
             onClick={onClose}
-            className="cancel-button"
+            className="btn btn-secondary"
             disabled={isLoading}
           >
             Cancelar
           </button>
-          <button type="submit" disabled={isLoading}>
+          <button
+            type="submit"
+            className="btn btn-primary"
+            disabled={isLoading}
+          >
             {isLoading ? "Guardando..." : "Guardar Roles"}
           </button>
         </div>

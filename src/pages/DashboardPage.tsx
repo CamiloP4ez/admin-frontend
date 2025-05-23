@@ -314,8 +314,6 @@ const DashboardPage: React.FC = () => {
             </div>
           </div>
 
-          <div className="quick-links-section"></div>
-
           <div className="quick-links-section">
             <h2>Enlaces Rápidos</h2>
             <ul>

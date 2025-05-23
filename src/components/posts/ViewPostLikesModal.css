@@ -1,0 +1,77 @@
+.view-likes-modal-content .loading-message,
+.view-likes-modal-content .info-message {
+  text-align: center;
+  padding: 20px 10px;
+  font-size: 1em;
+  color: var(--color-text-on-light);
+}
+.view-likes-modal-content .loading-message {
+  color: var(--color-primary-main);
+  font-weight: 500;
+}
+.view-likes-modal-content .info-message {
+  background-color: var(--color-background-accent);
+  border-radius: 6px;
+}
+
+.view-likes-modal-content .error-message {
+  background-color: #fff0f1;
+  color: var(--color-primary-accent);
+  border: 1px solid var(--color-primary-accent);
+  padding: 10px 15px;
+  border-radius: 6px;
+  margin: 15px 0;
+  font-size: 0.9em;
+  text-align: center;
+}
+
+.likes-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.likes-list-item {
+  display: flex;
+  align-items: center;
+  padding: 12px 15px;
+  border-bottom: 1px solid var(--color-border-soft);
+  transition: background-color 0.2s ease-in-out;
+  font-size: 0.95em;
+}
+
+.likes-list-item:last-child {
+  border-bottom: none;
+}
+
+.likes-list-item:hover {
+  background-color: var(--color-background-accent);
+}
+
+.likes-list-item .user-avatar-placeholder {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: var(--color-primary-main);
+  color: var(--color-text-on-dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 500;
+  margin-right: 12px;
+  font-size: 0.9em;
+  text-transform: uppercase;
+}
+
+.likes-list-item .username {
+  color: var(--color-text-on-light);
+  font-weight: 500;
+}
+
+.likes-list-item .user-id-fallback {
+  color: #777;
+  font-style: italic;
+  font-size: 0.9em;
+}

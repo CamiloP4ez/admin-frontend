@@ -8,6 +8,7 @@ import ViewUserConnectionsModal from "../components/users/ViewUserConnectionsMod
 import { useAuth } from "../hooks/useAuth";
 import UserPostsModal from "../components/users/UserPostModal";
 import type { UserResponseDto } from "../types/user";
+import "./UserPage.css";
 
 const UsersPage: React.FC = () => {
   const [users, setUsers] = useState<UserResponseDto[]>([]);
@@ -41,7 +42,7 @@ const UsersPage: React.FC = () => {
       }
     } catch (err: unknown) {
       console.error("Error fetching users:", err);
-      setError("Ocurrió un error.");
+      setError("Ocurrió un error al intentar contactar el servidor.");
       setUsers([]);
     } finally {
       setIsLoading(false);
@@ -106,6 +107,7 @@ const UsersPage: React.FC = () => {
       )
     ) {
       try {
+        setIsLoading(true);
         await deleteUserService(userIdToDelete);
         setUsers((prevUsers) =>
           prevUsers.filter((u) => u.id !== userIdToDelete)
@@ -113,7 +115,15 @@ const UsersPage: React.FC = () => {
         alert(`Usuario ${username} eliminado con éxito.`);
       } catch (err: unknown) {
         console.error("Error deleting user:", err);
-        alert("Error al eliminar el usuario.");
+        let errorMessage = "Error al eliminar el usuario.";
+        if (err && typeof err === "object" && "response" in err) {
+          const errorObj = err as {
+            response?: { data?: { message?: string } };
+          };
+          errorMessage = errorObj.response?.data?.message || errorMessage;
+        }
+        alert(errorMessage);
+        setError(errorMessage);
       } finally {
         setIsLoading(false);
       }
@@ -128,118 +138,127 @@ const UsersPage: React.FC = () => {
     setSelectedUserForAction(null);
   };
 
-  if (isLoading) return <p>Cargando usuarios...</p>;
-  if (error && users.length === 0)
-    return (
-      <p className="error-message" style={{ color: "var(--color-danger)" }}>
-        Error: {error}
-      </p>
-    );
+  if (isLoading && users.length === 0)
+    return <p className="loading-message">Cargando usuarios...</p>;
 
   return (
-    <div className="page-container">
+    <div className="page-container users-page">
       <div className="page-header">
         <h1>Gestión de Usuarios</h1>
         {isAdminOrSuperAdmin && (
-          <button onClick={handleOpenCreateUserModal} className="add-button">
-            Crear Usuario
+          <button
+            onClick={handleOpenCreateUserModal}
+            className="btn btn-primary"
+          >
+            <span className="icon-add">+</span> Crear Usuario
           </button>
         )}
       </div>
-      {error && (
-        <p
-          className="error-message"
-          style={{ color: "var(--color-danger)", marginBottom: "15px" }}
-        >
-          Error al cargar datos: {error}
-        </p>
+
+      {error && <p className="error-message">Error: {error}</p>}
+
+      {isLoading && (
+        <p className="loading-inline-message">Actualizando datos...</p>
       )}
 
-      <table className="admin-table">
-        <thead>
-          <tr>
-            <th>Username</th>
-            <th>Email</th>
-            <th>Roles</th>
-            <th>Estado</th>
-            <th>Seguidores</th>
-            <th>Siguiendo</th>
-            <th>Registrado</th>
-            <th>Publicaciones</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          {users.map((user) => (
-            <tr key={user.id}>
-              <td>{user.username}</td>
-              <td>{user.email}</td>
-              <td>{user.roles.join(", ").replace(/ROLE_/g, "")}</td>
-              <td>
-                <span
-                  style={{
-                    color: user.enabled ? "green" : "red",
-                    fontWeight: "bold",
-                  }}
-                >
-                  {user.enabled ? "Habilitado" : "Deshabilitado"}
-                </span>
-              </td>
-              <td style={{ textAlign: "center" }}>
-                <button
-                  onClick={() => handleOpenFollowersModal(user)}
-                  className="link-like-button"
-                  disabled={user.followersCount === 0}
-                  title="Ver seguidores"
-                >
-                  {user.followersCount}
-                </button>
-              </td>
-              <td style={{ textAlign: "center" }}>
-                <button
-                  onClick={() => handleOpenFollowingModal(user)}
-                  className="link-like-button"
-                  disabled={user.followingCount === 0}
-                  title="Ver a quién sigue"
-                >
-                  {user.followingCount}
-                </button>
-              </td>
-              <td>{new Date(user.createdAt).toLocaleDateString()}</td>
-              <td style={{ textAlign: "center" }}>
-                <button
-                  onClick={() => handleOpenPostsModal(user)}
-                  className="view-btn"
-                  title="Ver publicaciones del usuario"
-                >
-                  Ver
-                </button>
-              </td>
-              <td className="actions-cell">
-                {isAdminOrSuperAdmin && (
-                  <button
-                    onClick={() => handleOpenEditUserModal(user)}
-                    className="edit-btn"
-                  >
-                    Editar
-                  </button>
-                )}
-                {isSuperAdmin && (
-                  <button
-                    onClick={() => handleDeleteUser(user.id, user.username)}
-                    className="delete-btn"
-                    disabled={loggedInUser?.userId === user.id}
-                  >
-                    Borrar
-                  </button>
-                )}
-              </td>
+      <div className="table-responsive-container">
+        <table className="data-table">
+          <thead>
+            <tr>
+              <th>Username</th>
+              <th>Email</th>
+              <th>Roles</th>
+              <th>Estado</th>
+              <th className="text-center">Seguidores</th>
+              <th className="text-center">Siguiendo</th>
+              <th>Registrado</th>
+              <th className="text-center">Publicaciones</th>
+              <th>Acciones</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {users.length === 0 && !isLoading && !error && (
+              <tr>
+                <td colSpan={9} className="text-center empty-table-message">
+                  No hay usuarios para mostrar.
+                </td>
+              </tr>
+            )}
+            {users.map((user) => (
+              <tr key={user.id}>
+                <td data-label="Username">{user.username}</td>
+                <td data-label="Email">{user.email}</td>
+                <td data-label="Roles">
+                  {user.roles.join(", ").replace(/ROLE_/g, "")}
+                </td>
+                <td data-label="Estado">
+                  <span
+                    className={`status-badge ${
+                      user.enabled ? "status-enabled" : "status-disabled"
+                    }`}
+                  >
+                    {user.enabled ? "Habilitado" : "Deshabilitado"}
+                  </span>
+                </td>
+                <td data-label="Seguidores" className="text-center">
+                  <button
+                    onClick={() => handleOpenFollowersModal(user)}
+                    className="btn-link"
+                    disabled={user.followersCount === 0}
+                    title="Ver seguidores"
+                  >
+                    {user.followersCount}
+                  </button>
+                </td>
+                <td data-label="Siguiendo" className="text-center">
+                  <button
+                    onClick={() => handleOpenFollowingModal(user)}
+                    className="btn-link"
+                    disabled={user.followingCount === 0}
+                    title="Ver a quién sigue"
+                  >
+                    {user.followingCount}
+                  </button>
+                </td>
+                <td data-label="Registrado">
+                  {new Date(user.createdAt).toLocaleDateString()}
+                </td>
+                <td data-label="Publicaciones" className="text-center">
+                  <button
+                    onClick={() => handleOpenPostsModal(user)}
+                    className="btn btn-secondary btn-small"
+                    title="Ver publicaciones del usuario"
+                  >
+                    Ver
+                  </button>
+                </td>
+                <td data-label="Acciones" className="actions-cell">
+                  {isAdminOrSuperAdmin && (
+                    <button
+                      onClick={() => handleOpenEditUserModal(user)}
+                      className="btn btn-primary btn-small"
+                      title="Editar usuario"
+                    >
+                      <span className="icon-edit">✎</span> Editar
+                    </button>
+                  )}
+                  {isSuperAdmin && (
+                    <button
+                      onClick={() => handleDeleteUser(user.id, user.username)}
+                      className="btn btn-danger btn-small"
+                      disabled={loggedInUser?.userId === user.id}
+                      title="Borrar usuario"
+                    >
+                      <span className="icon-delete">🗑</span> Borrar
+                    </button>
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
 
-      {/* Modal para Crear/Editar Usuario */}
       {isAdminOrSuperAdmin && isUserFormModalOpen && (
         <UserFormModal
           isOpen={isUserFormModalOpen}
@@ -249,7 +268,6 @@ const UsersPage: React.FC = () => {
         />
       )}
 
-      {/* Modal para Ver Posts del Usuario */}
       {isPostsModalOpen && selectedUserForAction && (
         <UserPostsModal
           isOpen={isPostsModalOpen}
@@ -259,7 +277,6 @@ const UsersPage: React.FC = () => {
         />
       )}
 
-      {/* Modales para Ver Seguidores/Siguiendo */}
       {isFollowersModalOpen && selectedUserForAction && (
         <ViewUserConnectionsModal
           isOpen={isFollowersModalOpen}

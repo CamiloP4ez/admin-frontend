@@ -1,10 +1,156 @@
-.admin-table.comments-table td:nth-child(2) {
+.comments-page .page-header {
+  align-items: center;
+}
+
+.filters-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin-bottom: 25px;
+  padding: 20px;
+  background-color: var(--color-background-main);
+  border: 1px solid var(--color-border-soft);
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(78, 65, 135, 0.05);
+}
+
+.filter-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex-grow: 1;
+  min-width: 200px;
+}
+
+.filter-item label {
+  font-weight: 500;
+  color: var(--color-primary-main);
+  font-size: 0.9em;
+}
+
+.filter-input {
+  padding: 10px 14px;
+  border-radius: 5px;
+  border: 1px solid var(--color-border-table);
+  font-size: 0.95em;
+  color: var(--color-text-on-light);
+  background-color: #fff;
+}
+.filter-input:focus {
+  outline: none;
+  border-color: var(--color-primary-main);
+  box-shadow: 0 0 0 2px rgba(78, 65, 135, 0.2);
+}
+
+.comments-table th.cell-checkbox,
+.comments-table td.cell-checkbox {
+  width: 40px;
+  text-align: center;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+.comments-table th.select-all-checkbox-header {
+  padding-top: 12px;
+}
+
+.comments-table .cell-comment-content {
   max-width: 400px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.admin-table.comments-table td:nth-child(2):hover {
-  white-space: normal;
-  overflow: visible;
+.comments-table .cell-comment-content-header {
+  min-width: 250px;
+}
+
+.comments-table tr.selected-row td {
+  background-color: var(--color-background-accent) !important;
+}
+.comments-table tr:not(.selected-row):hover td {
+  background-color: #f9f6ff;
+}
+
+.comments-table tbody tr {
+  cursor: pointer;
+}
+
+.pagination-suggestion {
+  text-align: center;
+  margin-top: 20px;
+  font-style: italic;
+  color: #666;
+  font-size: 0.9em;
+}
+
+.icon-delete {
+  font-size: 1.1em;
+  line-height: 1;
+}
+
+@media screen and (max-width: 768px) {
+  .comments-page .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+  }
+  .comments-page .page-header .btn-danger {
+    align-self: flex-start;
+  }
+
+  .filters-container {
+    flex-direction: column;
+  }
+  .filter-item {
+    min-width: unset;
+  }
+
+  .comments-table thead {
+    display: none;
+  }
+  .comments-table tr {
+    display: block;
+    margin-bottom: 15px;
+    border: 1px solid var(--color-border-table);
+    border-radius: 6px;
+    background-color: #fff;
+    padding: 10px;
+  }
+  .comments-table td {
+    display: block;
+    text-align: right;
+    padding-left: 50%;
+    position: relative;
+    border-bottom: 1px dotted var(--color-border-soft);
+    padding-top: 8px;
+    padding-bottom: 8px;
+  }
+  .comments-table td:last-child {
+    border-bottom: none;
+  }
+  .comments-table td::before {
+    content: attr(data-label);
+    position: absolute;
+    left: 10px;
+    font-weight: bold;
+    color: var(--color-primary-main);
+    text-align: left;
+    width: calc(50% - 20px);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .comments-table td.cell-checkbox {
+    padding-left: 10px;
+    text-align: left;
+  }
+  .comments-table td.cell-checkbox::before {
+    display: none;
+  }
+  .comments-table td.cell-comment-content {
+    white-space: normal;
+    max-width: none;
+  }
+  .comments-table .actions-cell {
+    justify-content: flex-end;
+  }
 }

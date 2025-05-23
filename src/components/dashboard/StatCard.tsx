@@ -23,8 +23,6 @@ const StatCard: React.FC<StatCardProps> = ({
         className="stat-icon"
         style={{ backgroundColor: color || "var(--color-gray-medium)" }}
       >
-        {/* {iconMap[icon] || icon.substring(0,1).toUpperCase()}  */}
-        {/* Placeholder simple si no usas librería de iconos: */}
         <span>{icon.substring(0, 1).toUpperCase()}</span>
       </div>
       <div className="stat-info">

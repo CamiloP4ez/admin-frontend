@@ -1,4 +1,3 @@
-// src/components/layout/DashboardLayout.tsx
 import React from "react";
 import { Outlet, Navigate } from "react-router-dom";
 import Navbar from "./Navbar";
@@ -9,7 +8,7 @@ const DashboardLayout: React.FC = () => {
   const { isAuthenticated, isLoading } = useAuth();
 
   if (isLoading) {
-    return <div>Cargando autenticación...</div>; // O un spinner
+    return <div>Cargando autenticación...</div>;
   }
 
   if (!isAuthenticated) {
