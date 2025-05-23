@@ -71,3 +71,12 @@
 .logout-button:hover {
   background-color: var(--color-danger-dark);
 }
+.navbar-brand-link {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: inherit;
+}
+.navbar-brand-link:hover .navbar-title {
+  color: var(--color-primary-dark);
+}

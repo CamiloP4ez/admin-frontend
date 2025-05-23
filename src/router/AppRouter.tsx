@@ -9,6 +9,7 @@ import UsersPage from "../pages/UserPage";
 import PostsPage from "../pages/PostPage";
 import AdminsPage from "../pages/AdminPage";
 import CommentsPage from "../pages/CommentsPage";
+import DashboardPage from "../pages/DashboardPage";
 
 interface ProtectedRouteProps {
   element: JSX.Element;
@@ -43,6 +44,14 @@ const AppRouter: React.FC = () => {
         <Routes>
           <Route path="/login" element={<LoginPage />} />
           <Route path="/" element={<DashboardLayout />}>
+            <Route
+              index
+              element={<ProtectedRoute element={<DashboardPage />} />}
+            />
+            <Route
+              path="dashboard"
+              element={<ProtectedRoute element={<DashboardPage />} />}
+            />
             <Route index element={<Navigate to="/users" replace />} />
             <Route
               path="users"

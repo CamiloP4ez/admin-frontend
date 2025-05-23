@@ -206,3 +206,7 @@ code {
   margin-bottom: 5px;
   font-size: 0.85rem;
 }
+:root {
+  --color-info: #2196f3;
+  --color-info-dark: #1976d2;
+}

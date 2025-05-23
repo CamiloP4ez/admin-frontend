@@ -4,6 +4,7 @@ import { NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
 import GenericLogo from "../../assets/lookLogo.png";
 import "./Navbar.css";
+import { Link } from "react-router-dom";
 
 const Navbar: React.FC = () => {
   const { user, logout } = useAuth();
@@ -19,8 +20,10 @@ const Navbar: React.FC = () => {
   return (
     <nav className="navbar">
       <div className="navbar-brand">
-        <img src={GenericLogo} alt="Logo" className="navbar-logo" />
-        <span className="navbar-title">Admin Panel</span>
+        <Link to="/" className="navbar-brand-link">
+          <img src={GenericLogo} alt="Logo" className="navbar-logo" />
+          <span className="navbar-title">Admin Panel</span>
+        </Link>
       </div>
       <div className="navbar-links">
         <NavLink
