@@ -1,11 +1,35 @@
 import apiClient from "./apiClient";
-import { type ApiResponseDto } from "../types/api";
+import {
+  type AdminUserUpdateRequestDto,
+  type ApiResponseDto,
+  type UserCreateRequestDto,
+} from "../types/api";
 import type {
   UserResponseDto,
   UserRoleUpdateRequestDto,
   UserStatusUpdateDto,
   UserUpdateRequestDto,
 } from "../types/user";
+
+export const createUserByAdmin = async (
+  userData: UserCreateRequestDto
+): Promise<ApiResponseDto<UserResponseDto>> => {
+  const response = await apiClient.post<ApiResponseDto<UserResponseDto>>(
+    "/v1/users",
+    userData
+  );
+  return response.data;
+};
+export const updateUserByAdmin = async (
+  userId: string,
+  userData: AdminUserUpdateRequestDto
+): Promise<ApiResponseDto<UserResponseDto>> => {
+  const response = await apiClient.put<ApiResponseDto<UserResponseDto>>(
+    `/v1/users/${userId}`,
+    userData
+  );
+  return response.data;
+};
 
 export const getAllUsers = async (): Promise<
   ApiResponseDto<UserResponseDto[]>
