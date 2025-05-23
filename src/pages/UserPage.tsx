@@ -3,28 +3,30 @@ import {
   getAllUsers,
   deleteUser as deleteUserService,
 } from "../services/userService";
+import UserFormModal from "../components/users/UserFormModal";
+import ViewUserConnectionsModal from "../components/users/ViewUserConnectionsModal";
 import { useAuth } from "../hooks/useAuth";
 import UserPostsModal from "../components/users/UserPostModal";
-import EditUserModal from "../components/users/EditUsersModal";
 import type { UserResponseDto } from "../types/user";
-import ViewUserConnectionsModal from "../components/users/ViewUserConnectionsModal";
 
 const UsersPage: React.FC = () => {
   const [users, setUsers] = useState<UserResponseDto[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const [isUserFormModalOpen, setIsUserFormModalOpen] = useState(false);
+  const [isPostsModalOpen, setIsPostsModalOpen] = useState(false);
   const [isFollowersModalOpen, setIsFollowersModalOpen] = useState(false);
   const [isFollowingModalOpen, setIsFollowingModalOpen] = useState(false);
 
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [isPostsModalOpen, setIsPostsModalOpen] = useState(false);
-  const [selectedUser, setSelectedUser] = useState<UserResponseDto | null>(
-    null
-  );
+  const [selectedUserForAction, setSelectedUserForAction] =
+    useState<UserResponseDto | null>(null);
 
   const { user: loggedInUser } = useAuth();
   const isSuperAdmin = loggedInUser?.roles.includes("ROLE_SUPERADMIN");
+  const isAdminOrSuperAdmin = loggedInUser?.roles.some((role) =>
+    ["ROLE_ADMIN", "ROLE_SUPERADMIN"].includes(role)
+  );
 
   const fetchUsers = useCallback(async () => {
     setIsLoading(true);
@@ -35,15 +37,12 @@ const UsersPage: React.FC = () => {
         setUsers(response.data);
       } else {
         setError(response.message || "Error al cargar usuarios.");
+        setUsers([]);
       }
     } catch (err: unknown) {
-      console.error("Error updating user status:", err);
-
-      if (err instanceof Error) {
-        setError(err.message);
-      } else {
-        setError("Ocurrió un error al actualizar el usuario.");
-      }
+      console.error("Error fetching users:", err);
+      setError("Ocurrió un error.");
+      setUsers([]);
     } finally {
       setIsLoading(false);
     }
@@ -53,24 +52,45 @@ const UsersPage: React.FC = () => {
     fetchUsers();
   }, [fetchUsers]);
 
-  const handleOpenEditModal = (user: UserResponseDto) => {
-    setSelectedUser(user);
-    setIsEditModalOpen(true);
+  const handleOpenCreateUserModal = () => {
+    setSelectedUserForAction(null);
+    setIsUserFormModalOpen(true);
+  };
+
+  const handleOpenEditUserModal = (user: UserResponseDto) => {
+    setSelectedUserForAction(user);
+    setIsUserFormModalOpen(true);
   };
 
   const handleOpenPostsModal = (user: UserResponseDto) => {
-    setSelectedUser(user);
+    setSelectedUserForAction(user);
     setIsPostsModalOpen(true);
   };
 
-  const handleUserUpdated = (updatedUser: UserResponseDto) => {
-    setUsers((prevUsers) =>
-      prevUsers.map((u) => (u.id === updatedUser.id ? updatedUser : u))
-    );
-    fetchUsers();
+  const handleOpenFollowersModal = (user: UserResponseDto) => {
+    setSelectedUserForAction(user);
+    setIsFollowersModalOpen(true);
   };
 
-  const handleDeleteUser = async (userIdToDelete: string) => {
+  const handleOpenFollowingModal = (user: UserResponseDto) => {
+    setSelectedUserForAction(user);
+    setIsFollowingModalOpen(true);
+  };
+
+  const handleUserSaved = (savedUser: UserResponseDto) => {
+    const existingUserIndex = users.findIndex((u) => u.id === savedUser.id);
+    if (existingUserIndex > -1) {
+      setUsers((prevUsers) => {
+        const newUsers = [...prevUsers];
+        newUsers[existingUserIndex] = savedUser;
+        return newUsers;
+      });
+    } else {
+      setUsers((prevUsers) => [savedUser, ...prevUsers]);
+    }
+  };
+
+  const handleDeleteUser = async (userIdToDelete: string, username: string) => {
     if (!isSuperAdmin) {
       alert("No tienes permiso para borrar usuarios.");
       return;
@@ -82,51 +102,58 @@ const UsersPage: React.FC = () => {
 
     if (
       window.confirm(
-        "¿Estás seguro de que quieres eliminar este usuario? Esta acción no se puede deshacer."
+        `¿Estás seguro de que quieres eliminar al usuario ${username}? Esta acción no se puede deshacer.`
       )
     ) {
-      setIsLoading(true);
       try {
         await deleteUserService(userIdToDelete);
-
         setUsers((prevUsers) =>
           prevUsers.filter((u) => u.id !== userIdToDelete)
         );
+        alert(`Usuario ${username} eliminado con éxito.`);
       } catch (err: unknown) {
-        console.error("Error updating user status:", err);
-
-        if (err instanceof Error) {
-          setError(err.message);
-        } else {
-          setError("Ocurrió un error al actualizar el usuario.");
-        }
+        console.error("Error deleting user:", err);
+        alert("Error al eliminar el usuario.");
       } finally {
         setIsLoading(false);
       }
     }
   };
 
-  if (isLoading && users.length === 0) return <p>Cargando usuarios...</p>;
-  if (error)
+  const closeModalAndClearSelection = () => {
+    setIsUserFormModalOpen(false);
+    setIsPostsModalOpen(false);
+    setIsFollowersModalOpen(false);
+    setIsFollowingModalOpen(false);
+    setSelectedUserForAction(null);
+  };
+
+  if (isLoading) return <p>Cargando usuarios...</p>;
+  if (error && users.length === 0)
     return (
       <p className="error-message" style={{ color: "var(--color-danger)" }}>
         Error: {error}
       </p>
     );
-  const handleOpenFollowersModal = (user: UserResponseDto) => {
-    setSelectedUser(user);
-    setIsFollowersModalOpen(true);
-  };
-  const handleOpenFollowingModal = (user: UserResponseDto) => {
-    setSelectedUser(user);
-    setIsFollowingModalOpen(true);
-  };
 
   return (
     <div className="page-container">
       <div className="page-header">
         <h1>Gestión de Usuarios</h1>
+        {isAdminOrSuperAdmin && (
+          <button onClick={handleOpenCreateUserModal} className="add-button">
+            Crear Usuario
+          </button>
+        )}
       </div>
+      {error && (
+        <p
+          className="error-message"
+          style={{ color: "var(--color-danger)", marginBottom: "15px" }}
+        >
+          Error al cargar datos: {error}
+        </p>
+      )}
 
       <table className="admin-table">
         <thead>
@@ -161,7 +188,7 @@ const UsersPage: React.FC = () => {
               <td style={{ textAlign: "center" }}>
                 <button
                   onClick={() => handleOpenFollowersModal(user)}
-                  className="link-like-button" // Un botón que parezca un enlace
+                  className="link-like-button"
                   disabled={user.followersCount === 0}
                   title="Ver seguidores"
                 >
@@ -178,7 +205,6 @@ const UsersPage: React.FC = () => {
                   {user.followingCount}
                 </button>
               </td>
-
               <td>{new Date(user.createdAt).toLocaleDateString()}</td>
               <td style={{ textAlign: "center" }}>
                 <button
@@ -190,15 +216,17 @@ const UsersPage: React.FC = () => {
                 </button>
               </td>
               <td className="actions-cell">
-                <button
-                  onClick={() => handleOpenEditModal(user)}
-                  className="edit-btn"
-                >
-                  Editar Estado
-                </button>
+                {isAdminOrSuperAdmin && (
+                  <button
+                    onClick={() => handleOpenEditUserModal(user)}
+                    className="edit-btn"
+                  >
+                    Editar
+                  </button>
+                )}
                 {isSuperAdmin && (
                   <button
-                    onClick={() => handleDeleteUser(user.id)}
+                    onClick={() => handleDeleteUser(user.id, user.username)}
                     className="delete-btn"
                     disabled={loggedInUser?.userId === user.id}
                   >
@@ -211,44 +239,42 @@ const UsersPage: React.FC = () => {
         </tbody>
       </table>
 
-      {selectedUser && (
-        <EditUserModal
-          isOpen={isEditModalOpen}
-          onClose={() => setIsEditModalOpen(false)}
-          user={selectedUser}
-          onUserUpdated={handleUserUpdated}
+      {/* Modal para Crear/Editar Usuario */}
+      {isAdminOrSuperAdmin && isUserFormModalOpen && (
+        <UserFormModal
+          isOpen={isUserFormModalOpen}
+          onClose={closeModalAndClearSelection}
+          userToEdit={selectedUserForAction}
+          onUserSaved={handleUserSaved}
         />
       )}
 
-      {selectedUser && (
+      {/* Modal para Ver Posts del Usuario */}
+      {isPostsModalOpen && selectedUserForAction && (
         <UserPostsModal
           isOpen={isPostsModalOpen}
-          onClose={() => setIsPostsModalOpen(false)}
-          userId={selectedUser.id}
-          username={selectedUser.username}
+          onClose={closeModalAndClearSelection}
+          userId={selectedUserForAction.id}
+          username={selectedUserForAction.username}
         />
       )}
-      {selectedUser && ( // <--- NUEVOS MODALES
-        <>
-          <ViewUserConnectionsModal
-            isOpen={isFollowersModalOpen}
-            onClose={() => {
-              setIsFollowersModalOpen(false);
-              setSelectedUser(null);
-            }}
-            user={selectedUser}
-            type="followers"
-          />
-          <ViewUserConnectionsModal
-            isOpen={isFollowingModalOpen}
-            onClose={() => {
-              setIsFollowingModalOpen(false);
-              setSelectedUser(null);
-            }}
-            user={selectedUser}
-            type="following"
-          />
-        </>
+
+      {/* Modales para Ver Seguidores/Siguiendo */}
+      {isFollowersModalOpen && selectedUserForAction && (
+        <ViewUserConnectionsModal
+          isOpen={isFollowersModalOpen}
+          onClose={closeModalAndClearSelection}
+          user={selectedUserForAction}
+          type="followers"
+        />
+      )}
+      {isFollowingModalOpen && selectedUserForAction && (
+        <ViewUserConnectionsModal
+          isOpen={isFollowingModalOpen}
+          onClose={closeModalAndClearSelection}
+          user={selectedUserForAction}
+          type="following"
+        />
       )}
     </div>
   );
