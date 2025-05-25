@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback, useMemo } from "react"; // Added useMemo
+import React, { useEffect, useState, useCallback, useMemo } from "react";
 import {
   getAllUsers,
   updateUserStatus,
@@ -13,7 +13,7 @@ const AdminsPage: React.FC = () => {
   const [users, setUsers] = useState<UserResponseDto[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [searchTerm, setSearchTerm] = useState<string>(""); // New state for search term
+  const [searchTerm, setSearchTerm] = useState<string>("");
 
   const [isRolesModalOpen, setIsRolesModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<UserResponseDto | null>(
@@ -211,7 +211,6 @@ const AdminsPage: React.FC = () => {
     }
   };
 
-  // Memoize filtered users to avoid re-filtering on every render unless users or searchTerm changes
   const filteredUsers = useMemo(() => {
     if (!searchTerm) {
       return users;
@@ -299,7 +298,6 @@ const AdminsPage: React.FC = () => {
             </thead>
             <tbody>
               {filteredUsers.map((user) => {
-                // Use filteredUsers here
                 const isSelf = user.id === loggedInUser.userId;
                 const loggedInUserIsSuperAdmin =
                   loggedInUser.roles.includes("ROLE_SUPERADMIN");

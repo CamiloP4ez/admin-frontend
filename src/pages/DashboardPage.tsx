@@ -28,7 +28,7 @@ const MAX_RECENT_ITEMS = 5;
 
 const formatDateForAxis = (dateString: string) => {
   const date = new Date(dateString);
-  return `${date.getDate()}/${date.getMonth() + 1}`; // DD/MM
+  return `${date.getDate()}/${date.getMonth() + 1}`;
 };
 
 const DashboardPage: React.FC = () => {
@@ -115,37 +115,33 @@ const DashboardPage: React.FC = () => {
   ) => {
     const counts: { [key: string]: number } = {};
     const today = new Date();
-    today.setHours(0, 0, 0, 0); // Normalizar al inicio del día
+    today.setHours(0, 0, 0, 0);
 
-    // Inicializar los últimos N días con 0 cuentas
     for (let i = 0; i < numberOfDays; i++) {
       const d = new Date(today);
       d.setDate(today.getDate() - i);
-      const dateString = d.toISOString().split("T")[0]; // YYYY-MM-DD
+      const dateString = d.toISOString().split("T")[0];
       counts[dateString] = 0;
     }
 
     items.forEach((item) => {
       const itemDate = new Date(item.createdAt);
-      itemDate.setHours(0, 0, 0, 0); // Normalizar al inicio del día
+      itemDate.setHours(0, 0, 0, 0);
 
       const diffTime = Math.abs(today.getTime() - itemDate.getTime());
       const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
       if (diffDays < numberOfDays) {
-        // Solo contar items dentro del rango de días
-        const dateString = itemDate.toISOString().split("T")[0]; // YYYY-MM-DD
+        const dateString = itemDate.toISOString().split("T")[0];
         if (counts[dateString] !== undefined) {
-          // Asegurarse que el día está en nuestro rango inicializado
           counts[dateString]++;
         }
       }
     });
 
-    // Convertir a formato para Recharts [{date: 'YYYY-MM-DD', count: X}] y ordenar
     return Object.entries(counts)
       .map(([date, count]) => ({ date, count }))
-      .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()); // Ordenar por fecha ascendente
+      .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
   };
 
   const formatRecentUsers = () =>
@@ -247,7 +243,7 @@ const DashboardPage: React.FC = () => {
                         angle={-30}
                         textAnchor="end"
                         height={50}
-                        interval={0} // Mostrar todos los ticks si son pocos
+                        interval={0}
                       />
                       <YAxis allowDecimals={false} />
                       <Tooltip

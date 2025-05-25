@@ -98,11 +98,6 @@ const LoginPage: React.FC = () => {
             </p>
           )}
 
-          <div className="form-options">
-            <a href="/forgot-password" className="forgot-password-link">
-              ¿Olvidaste tu contraseña?
-            </a>
-          </div>
           <button type="submit" className="login-button" disabled={isLoading}>
             {isLoading ? "Cargando..." : "Aceptar"}
           </button>

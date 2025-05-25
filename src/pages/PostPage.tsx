@@ -187,7 +187,6 @@ const PostsPage: React.FC = () => {
     <div className="page-container posts-page">
       <div className="page-header">
         <h1>Gestión de Publicaciones</h1>
-        {/* <button className="btn btn-primary">Crear Publicación</button> */}
       </div>
 
       <div className="filter-container">
